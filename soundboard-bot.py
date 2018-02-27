@@ -101,7 +101,6 @@ async def clip(ctx, url = None, start = None, duration = None, file_name = None)
     print(ydl_opts)
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
-    await play_sound(file_name)
 
 @bot.command(pass_context=True)
 async def listAll(ctx):
