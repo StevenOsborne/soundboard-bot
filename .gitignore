@@ -1,1 +1,7 @@
-sounds/*
+#Ignore all sound files - These will be created locally
+sounds/*.mp3
+
+#Ignore ffmpeg
+ffmpeg.exe
+ffplay.exe
+ffprobe.exe
