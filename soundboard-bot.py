@@ -1,4 +1,3 @@
-#This is a test
 #Add delete
 #Add youtube queue? (play clip queue?)
 #Fix clipping errors - (same video worked at different times?)
