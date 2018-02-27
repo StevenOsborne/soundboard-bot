@@ -1,4 +1,5 @@
 #Add delete
+#Write start and stop script so that we don't need to keep ssh onto pi
 #Add youtube queue? (play clip queue?)
 #Fix clipping errors - (same video worked at different times?)
 #Getters and setters for player/voice
@@ -100,6 +101,7 @@ async def clip(ctx, url = None, start = None, duration = None, file_name = None)
     print(ydl_opts)
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
+    await play_sound(file_name)
 
 @bot.command(pass_context=True)
 async def listAll(ctx):
