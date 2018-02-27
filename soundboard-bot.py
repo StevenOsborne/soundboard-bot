@@ -77,6 +77,8 @@ async def clip(ctx, url = None, start = None, duration = None, file_name = None)
     if url is None or start is None or duration is None or file_name is None:
         await bot.say('```url, start time, duration, file name```')
         return
+    start = start.strip()
+    duration = duration.strip()
     file_name = file_name.replace(" ", "_")
     file = 'sounds/' + file_name + '.'
     ydl_opts = {
