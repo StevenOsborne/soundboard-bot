@@ -103,7 +103,7 @@ async def clip(ctx, url = None, start = None, duration = None, file_name = None)
 async def listAll(ctx):
     all_files = glob.glob("sounds/*.mp3")
     all_files_string = "```\n"
-    for file_name in enumerate(all_files):
+    for file_name in all_files:
         all_files_string += file_name[file_name.find('\\') + 1: file_name.find(".mp3")] + "\n"
 
     all_files_string += "```"
