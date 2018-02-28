@@ -1,15 +1,16 @@
-#Clip specific volume
-#Add Random
+#Clean up your code you filthy animal
+#Clip specific volume - Volume equalizer?
 #Add delete
 #Write start and stop script so that we don't need to keep ssh onto pi
-#Add youtube queue? (play clip queue?)
-#Volume equalizer?
+#Add queue? (play clip queue?)
 #Fix clipping errors - (same video worked at different times?)
 #Getters and setters for player/voice
 #state machine - so we can't have multiple things running
-# clips not right size?? (timing off)
+#Clips not right size?? (timing off)
 #Can call play sound without having voice (voice is null)
-
+#Intergrate the book of our lord - bible.com has an api
+#Quickmeme - clips shorter than 5 seconds
+#Most played? Change the way info is stored? Metadata? Or just text file?
 
 import discord
 from discord.ext import commands
