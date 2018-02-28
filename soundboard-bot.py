@@ -1,9 +1,14 @@
+#Clip specific volume
+#Add Random
 #Add delete
 #Write start and stop script so that we don't need to keep ssh onto pi
 #Add youtube queue? (play clip queue?)
+#Volume equalizer?
 #Fix clipping errors - (same video worked at different times?)
 #Getters and setters for player/voice
 #state machine - so we can't have multiple things running
+# clips not right size?? (timing off)
+#Can call play sound without having voice (voice is null)
 
 
 import discord
@@ -14,6 +19,7 @@ import urllib.parse
 import urllib.request
 import youtube_dl
 import glob
+import random
 from bs4 import BeautifulSoup
 
 if not discord.opus.is_loaded():
@@ -102,7 +108,7 @@ async def clip(ctx, url = None, start = None, duration = None, file_name = None)
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True) #Need to change to '/' for raspbian
 async def listAll(ctx):
     all_files = glob.glob("sounds/*.mp3")
     all_files_string = "```\n"
@@ -113,7 +119,17 @@ async def listAll(ctx):
     print(all_files_string)
     await bot.say(all_files_string)
 
-##MAKE IMAGE THE WOOD ROBOT
+@bot.command(pass_context=True)
+async def meme(ctx):
+    random_file = random.choice(os.listdir("sounds/"))
+    random_file = random_file[:random_file.find(".mp3")]
+    if not bot.is_voice_connected(ctx.message.author.server):
+        global voice
+        voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
+        await play_sound(random_file)
+    else:
+        await play_sound(random_file)
+
 
 # @bot.command(pass_context=True)
 # async def help(ctx):
@@ -162,4 +178,4 @@ async def get_first_youtube_result(command): #Does this need to be async?
     soup = BeautifulSoup(html, "html.parser")
     return "https://www.youtube.com" + soup.findAll(attrs={'class':'yt-uix-tile-link'})[0]['href']
 
-bot.run('NDE2OTYzNTc0MTc1NDk4Mjg3.DXMJkw.m5_izbxwU1xQYBx-LucEBt9e9h8')
+bot.run('NDE4NTQxNjY4ODQ1ODc5MzA2.DXjF4A.qrpFogXelKzOmva588n0EMl42ek')
