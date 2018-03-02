@@ -1,9 +1,11 @@
+#Logging - http://discordpy.readthedocs.io/en/latest/logging.html
+#Make a config file to hold the discord bot tokens
 #Clean up your code you filthy animal
 #Clip specific volume - Volume equalizer?
 #Add delete
 #Write start and stop script so that we don't need to keep ssh onto pi
 #Add queue? (play clip queue?)
-#Fix clipping errors - (same video worked at different times?)
+#Fix clipping errors - (same video worked at different times?) - snakeater doesn't work after 10 seconds in
 #Getters and setters for player/voice
 #state machine - so we can't have multiple things running
 #Clips not right size?? (timing off)
@@ -12,6 +14,7 @@
 #Quickmeme - clips shorter than 5 seconds
 #Most played? Change the way info is stored? Metadata? Or just text file?
 
+import logging #LOGGING
 import discord
 from discord.ext import commands
 import asyncio
@@ -21,10 +24,18 @@ import urllib.request
 import youtube_dl
 import glob
 import random
+import json
 from bs4 import BeautifulSoup
 
 if not discord.opus.is_loaded():
     discord.opus.load_opus('opus')
+
+# logging.basicConfig(level=logging.INFO) #LOGGING
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+# handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+# handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+# logger.addHandler(handler)
 
 bot = commands.Bot(command_prefix='!')
 voice = None
@@ -110,14 +121,14 @@ async def clip(ctx, url = None, start = None, duration = None, file_name = None)
         ydl.download([url])
 
 @bot.command(pass_context=True) #Need to change to '/' for raspbian
-async def listAll(ctx):
-    all_files = glob.glob("sounds/*.mp3")
-    all_files_string = "```\n"
-    for file_name in all_files:
-        all_files_string += file_name[file_name.find('\\') + 1: file_name.find(".mp3")] + "\n"
+async def listall(ctx):
+    all_files = sorted([os.path.basename(x) for x in glob.glob("sounds/*.mp3")], key=lambda s: s.lower())
+    all_files = [os.path.splitext(x)[0] for x in all_files]
 
+    all_files_string = "```\n"
+    all_files_string += '\n'.join(str(x) for x in all_files)
     all_files_string += "```"
-    print(all_files_string)
+
     await bot.say(all_files_string)
 
 @bot.command(pass_context=True)
@@ -130,7 +141,6 @@ async def meme(ctx):
         await play_sound(random_file)
     else:
         await play_sound(random_file)
-
 
 # @bot.command(pass_context=True)
 # async def help(ctx):
@@ -179,4 +189,7 @@ async def get_first_youtube_result(command): #Does this need to be async?
     soup = BeautifulSoup(html, "html.parser")
     return "https://www.youtube.com" + soup.findAll(attrs={'class':'yt-uix-tile-link'})[0]['href']
 
-bot.run('NDE4NTQxNjY4ODQ1ODc5MzA2.DXjF4A.qrpFogXelKzOmva588n0EMl42ek')
+if __name__ == '__main__':
+    with open('config.json') as config_file:
+        config = json.load(config_file)
+    bot.run(config["token"])
