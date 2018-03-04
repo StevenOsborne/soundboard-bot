@@ -214,7 +214,7 @@ class SoundboardBot:
     @commands.command(pass_context=True, no_pm=True)
     async def meme(self, ctx):
         """Plays a random sound file."""
-        random_file = random.choice(os.listdir("sounds/*.mp3"))
+        random_file = random.choice(os.listdir("sounds/"))
         random_file = random_file[:random_file.find(".mp3")]
 
         try:
