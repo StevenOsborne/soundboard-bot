@@ -1,5 +1,10 @@
 #Ignore all sound files - These will be created locally
-sounds/*.mp3
+sounds/*
+!sounds/.gitkeep
+
+#Ignore logs
+logs/*
+!logs/.gitkeep
 
 #Ignore ffmpeg
 ffmpeg.exe

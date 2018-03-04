@@ -1,9 +1,8 @@
-#Logging - http://discordpy.readthedocs.io/en/latest/logging.html
+#Timeout exception
 #Clip specific volume - Volume equalizer?
 #Add delete
 #Write stop script for better stopping??
-#Fix clipping errors - (same video worked at different times?) - snakeater doesn't work after 10 seconds in
-#Clips not right size?? (timing off)
+#Clips not right size? (timing off) - Could be fixed with youtube-dl/ffmpeg work?
 #Intergrate the book of our lord - bible.com has an api
 #Quickmeme - clips shorter than 5 seconds
 #Most played? Change the way info is stored? Metadata? Or just text file?
@@ -24,12 +23,11 @@ from bs4 import BeautifulSoup
 if not discord.opus.is_loaded():
     discord.opus.load_opus('opus')
 
-# logging.basicConfig(level=logging.INFO) #LOGGING
 logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
-# handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-# handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-# logger.addHandler(handler)
+logger.setLevel(logging.WARNING)
+handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 class VoiceEntry:
     def __init__(self, message, player, title):
@@ -188,26 +186,18 @@ class SoundboardBot:
         start = start.strip()
         duration = duration.strip()
         file_name = file_name.replace(" ", "_")
-        file = 'sounds/' + file_name + '.'
+        file = 'sounds/' + file_name
+        audio_quality = '192'
+        
         ydl_opts = {
-            'outtmpl': file + '%(ext)s',
             'format': 'bestaudio/best',
-            'extractaudio': True,
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192'
-            }],
-            'postprocessor_args': [
-                "-ss",
-                start,
-                "-t",
-                duration,
-            ],
-        }
-        print(ydl_opts)
+            }
+
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([url])
+            video_info = ydl.extract_info(url, download=False)
+            audio_url = video_info.get("url", None)
+            print(audio_url)
+        os.system("ffmpeg -y -ss {0} -i \"{1}\" -t {2} -b:a {3}k {4}.mp3".format(start, audio_url, duration, audio_quality, file))
 
     @commands.command(pass_context=True)
     async def listall(self, ctx):
@@ -224,7 +214,7 @@ class SoundboardBot:
     @commands.command(pass_context=True, no_pm=True)
     async def meme(self, ctx):
         """Plays a random sound file."""
-        random_file = random.choice(os.listdir("sounds/"))
+        random_file = random.choice(os.listdir("sounds/*.mp3"))
         random_file = random_file[:random_file.find(".mp3")]
 
         try:
@@ -272,7 +262,6 @@ class SoundboardBot:
         html = response.read()
         soup = BeautifulSoup(html, "html.parser")
         return "https://www.youtube.com" + soup.findAll(attrs={'class':'yt-uix-tile-link'})[0]['href']
-
 
 bot = commands.Bot(command_prefix='!')
 bot.add_cog(SoundboardBot(bot))
