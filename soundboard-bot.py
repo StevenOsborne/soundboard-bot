@@ -23,12 +23,6 @@ from bs4 import BeautifulSoup
 if not discord.opus.is_loaded():
     discord.opus.load_opus('opus')
 
-logger = logging.getLogger('discord')
-logger.setLevel(logging.WARNING)
-handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
-
 class VoiceEntry:
     def __init__(self, message, player, title):
         self.requester = message.author
@@ -78,6 +72,11 @@ class SoundboardBot:
     def __init__(self, bot):
         self.bot = bot
         self.voice_states = {}
+        self.logger = logging.getLogger('discord')
+        self.logger.setLevel(logging.INFO)
+        handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='w')
+        handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+        self.logger.addHandler(handler)
 
     def get_voice_state(self, server):
         state = self.voice_states.get(server.id)
@@ -115,11 +114,11 @@ class SoundboardBot:
         try:
             await self.play_sound(ctx, arg)
         except Exception as e:
-            print(e)
+           self.logger.exception('Error playing sound - ')
 
     async def play_sound(self, ctx, command):
         file_path = 'sounds/' + command + '.mp3'
-        print('Trying to play: ' + file_path)
+        self.logger.info('Trying to play: ' + file_path)
         if os.path.isfile(file_path):
             state = self.get_voice_state(ctx.message.server)
 
@@ -129,16 +128,16 @@ class SoundboardBot:
                     return
             try:
                 player = state.voice.create_ffmpeg_player(file_path, after=state.toggle_next)
-                print('Playing audio file')
+                self.logger.info('Playing audio file')
             except Exception as e:
-                print(e)
+                self.logger.exception('Error playing sound - ')
             else:
                 entry = VoiceEntry(ctx.message, player, command)
                 # await bot.say('Queued: {}'.format(entry)) Bot message is probably annoying
                 await state.songs.put(entry) 
         else:
             # await error()
-            print('File not found')
+            self.logger.error('File not found - {0} for command {1}'.format(file_path, command))
             await bot.say('```File not found```')
 
     @commands.command(pass_context=True, no_pm=True)
@@ -196,7 +195,7 @@ class SoundboardBot:
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             video_info = ydl.extract_info(url, download=False)
             audio_url = video_info.get("url", None)
-            print(audio_url)
+            self.logger.info(audio_url)
         os.system("ffmpeg -y -ss {0} -i \"{1}\" -t {2} -b:a {3}k {4}.mp3".format(start, audio_url, duration, audio_quality, file))
 
     @commands.command(pass_context=True)
@@ -220,7 +219,7 @@ class SoundboardBot:
         try:
             await self.play_sound(ctx, random_file)
         except Exception as e:
-            print(e)
+            self.logger.exception('Error playing random sound file')
 
     async def error(self, ):
         await play_file('sounds/icantdothat.mp3')
@@ -231,25 +230,21 @@ class SoundboardBot:
         try:
             await self.play_youtube(ctx, arg)
         except Exception as e:
-            print(e)
+            self.logger.exception('Error playing youtube video')
 
     async def play_youtube(self, ctx, command):#Rework getting youtube result - use search from example and give user option
         url = await self.get_first_youtube_result(command)
-        print("url")
-        print(url)
-        print("END OF url")
-
         state = self.get_voice_state(ctx.message.server)
-
+        self.logger.info('Youtube url: /n ' + url)
         if state.voice is None:
             success = await ctx.invoke(self.summon)
             if not success:
                 return
         try:
             player = await state.voice.create_ytdl_player(url, after=state.toggle_next)
-            print('Playing youtube audio')
+            self.logger.info('Playing youtube audio')
         except Exception as e:
-            print(e)
+            self.logger.exception('Error playing youtube video')
         else:
             entry = VoiceEntry(ctx.message, player, command)
             # await bot.say('Queued: {}'.format(entry)) Bot message is probably annoying
@@ -267,6 +262,7 @@ bot = commands.Bot(command_prefix='!')
 bot.add_cog(SoundboardBot(bot))
 @bot.event
 async def on_ready():
+    logger = 
     print('Logged in as '+ bot.user.name)
     print('Connected to servers')
     for server in bot.servers:
