@@ -262,7 +262,6 @@ bot = commands.Bot(command_prefix='!')
 bot.add_cog(SoundboardBot(bot))
 @bot.event
 async def on_ready():
-    logger = 
     print('Logged in as '+ bot.user.name)
     print('Connected to servers')
     for server in bot.servers:
