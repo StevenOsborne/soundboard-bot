@@ -107,10 +107,10 @@ class SoundboardBot:
 
         return True
 
-    @commands.command(pass_context=True, no_pm=True)
-    async def play(self, ctx, arg):
+    @commands.command(pass_context=True, no_pm=True, rest_is_raw=True)
+    async def play(self, ctx, *, arg):
         """Plays a sound clip with the specified title."""
-        arg = arg.replace(" ", "_")
+        arg = arg.strip().replace('"', '').replace(" ", "_")
         try:
             await self.play_sound(ctx, arg)
         except Exception as e:
@@ -197,6 +197,27 @@ class SoundboardBot:
             audio_url = video_info.get("url", None)
             self.logger.info(audio_url)
         os.system("ffmpeg -y -ss {0} -i \"{1}\" -t {2} -b:a {3}k {4}.mp3".format(start, audio_url, duration, audio_quality, file))
+
+    @commands.command(pass_context=True)
+    async def gif(self, ctx, url = None, start = None, duration = None, file_name = None):
+        if url is None or start is None or duration is None or file_name is None:
+            await bot.say("```url, start time, duration, file name```")
+            return
+        start = start.strip()
+        duration = duration.strip()
+        file_name = file_name.replace(" ", "_")
+        file = "gifs/" + file_name
+        
+        ydl_opts = {
+            "format": "bestvideo/best",
+            }
+
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            video_info = ydl.extract_info(url, download=False)
+            video_url = video_info.get("url", None)
+            self.logger.info(video_url)
+        os.system("ffmpeg -y -ss {0} -i \"{1}\" -t {2} {3}.gif".format(start, video_url, duration, file))
+        #FILE FORMAT? .gif, .webm, .mp4?
 
     @commands.command(pass_context=True)
     async def listall(self, ctx):
