@@ -77,6 +77,7 @@ class SoundboardBot:
         handler = logging.FileHandler(filename="logs/discord.log", encoding="utf-8", mode="w")
         handler.setFormatter(logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s"))
         self.logger.addHandler(handler)
+        self.valid_search_response = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', 'c']
 
     def get_voice_state(self, server):
         state = self.voice_states.get(server.id)
@@ -249,16 +250,44 @@ class SoundboardBot:
     async def error(self, ):
         await play_file("sounds/icantdothat.mp3")
 
-    @commands.command(name="ytb", pass_context=True, no_pm=True)
-    async def youtube(self, ctx, arg):
+    @commands.command(name="search", pass_context=True, no_pm=True)
+    async def youtube(self, ctx, *, arg):
         """Plays the first youtube result for the given search terms."""
         try:
             await self.play_youtube(ctx, arg)
         except Exception as e:
             self.logger.exception("Error playing youtube video")
 
-    async def play_youtube(self, ctx, command):#Rework getting youtube result - use search from example and give user option
-        url = await self.get_first_youtube_result(command)
+    async def play_youtube(self, ctx, command):
+        results = self.get_youtube_results(command)
+
+        results_string  = "```\n"
+        for index, result in enumerate(results):
+            if not result["href"].startswith("https://googleads.g.doubleclick.net/"):
+                results_string += "\n" + str(index + 1) + ": " + result["title"]
+
+        results_string += "\n" + "c: cancel"
+        results_string += "```"
+
+        bot_message = await bot.say(results_string)
+
+        def check(msg):
+            return msg.content in self.valid_search_response
+ 
+        message = await bot.wait_for_message(author = ctx.message.author, channel = ctx.message.channel, check = check)
+
+        await bot.delete_message(bot_message)
+
+        result = message.content
+
+        if result == 'c':
+            return
+    
+        url = "https://www.youtube.com" + results[int(result) - 1]["href"]
+
+
+        print(url)
+
         state = self.get_voice_state(ctx.message.server)
         self.logger.info("Youtube url: /n " + url)
         if state.voice is None:
@@ -274,14 +303,16 @@ class SoundboardBot:
             entry = VoiceEntry(ctx.message, player, command)
             # await bot.say("Queued: {}".format(entry)) Bot message is probably annoying
             await state.songs.put(entry) 
-        
-    async def get_first_youtube_result(self, command): #Does this need to be async?
+
+    def get_youtube_results(self, command):
         query = urllib.parse.quote(command)
         url = "https://www.youtube.com/results?search_query=" + query
         response = urllib.request.urlopen(url)
         html = response.read()
         soup = BeautifulSoup(html, "html.parser")
-        return "https://www.youtube.com" + soup.findAll(attrs={"class":"yt-uix-tile-link"})[0]["href"]
+        youtube_array = soup.findAll(attrs={"class":"yt-uix-tile-link"})
+
+        return youtube_array
 
 bot = commands.Bot(command_prefix="!")
 bot.add_cog(SoundboardBot(bot))
