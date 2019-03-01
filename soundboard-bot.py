@@ -19,7 +19,6 @@ import glob
 import random
 import json
 import speech_recognition as sr
-import pyaudio
 from bs4 import BeautifulSoup
 
 if not discord.opus.is_loaded():
