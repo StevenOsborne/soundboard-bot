@@ -113,7 +113,7 @@ class SoundboardBot:
     @commands.command(pass_context=True, no_pm=True, rest_is_raw=True)
     async def play(self, ctx, *, arg):
         """Plays a sound clip with the specified title."""
-        arg = arg.strip().replace('"', '').replace(" ", "_")
+        arg = arg.strip().replace('"', '').replace(" ", "_").replace("'", "")
         try:
             await self.play_sound(ctx, arg)
         except Exception as e:
@@ -187,9 +187,7 @@ class SoundboardBot:
             return
         start = start.strip()
         duration = duration.strip()
-        file_name = file_name.replace(" ", "_")
-        file_name = file_name.replace("'", "")
-        file_name = file_name.replace("\"", "")
+        file_name = file_name.replace(" ", "_").replace("'", "").replace("\"", "")
         file = "sounds/" + file_name
         audio_quality = "192"
         
