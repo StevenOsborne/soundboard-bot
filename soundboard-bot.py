@@ -189,6 +189,8 @@ class SoundboardBot:
         start = start.strip()
         duration = duration.strip()
         file_name = file_name.replace(" ", "_")
+        file_name = file_name.replace("'", "")
+        file_name = file_name.replace("\"", "")
         file = "sounds/" + file_name
         audio_quality = "192"
         
