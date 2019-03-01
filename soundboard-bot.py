@@ -7,7 +7,7 @@
 #Most played? Change the way info is stored? Metadata? Or just text file?
 #Intergrate the book of our lord - bible.com has an api
 
-import logging #LOGGING
+import logging
 import discord
 from discord.ext import commands
 import asyncio
@@ -18,6 +18,8 @@ import youtube_dl
 import glob
 import random
 import json
+import speech_recognition as sr
+import pyaudio
 from bs4 import BeautifulSoup
 
 if not discord.opus.is_loaded():
@@ -70,6 +72,7 @@ class VoiceState:
 
 class SoundboardBot:
     def __init__(self, bot):
+        self.recognizer = sr.Recognizer()
         self.bot = bot
         self.voice_states = {}
         self.logger = logging.getLogger("discord")
@@ -210,7 +213,7 @@ class SoundboardBot:
         file = "gifs/" + file_name
         
         ydl_opts = {
-            "format": "bestvideo/best",
+            "format": "worstvideo/worst",
             }
 
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
@@ -249,6 +252,17 @@ class SoundboardBot:
 
     async def error(self, ):
         await play_file("sounds/icantdothat.mp3")
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def recognition_test(self, ctx):
+        test = sr.AudioFile("test.wav")
+        with test as source:
+            audio = self.recognizer.record(source)
+            await bot.say(self.recognizer.recognize_google(audio))
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def test(self, ctx):
+        await bot.say(type(bot.ws))
 
     @commands.command(name="search", pass_context=True, no_pm=True)
     async def youtube(self, ctx, *, arg):
