@@ -16,8 +16,8 @@ for (const file of commandFiles) {
 
 async function getConnection(message) {
     console.log("Joining voice channel")
-    if (message.member.voiceChannel) {
-        return message.member.voiceChannel.join()
+    if (message.member.voice.channel) {
+        return message.member.voice.channel.join()
     }
 }
 

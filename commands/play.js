@@ -18,7 +18,7 @@ module.exports = {
             queue.push(file);
         } else {
             console.log(`Playing: ${file}`);
-            dispatcher = connection.playFile(`./sounds/${file}.mp3`);
+            dispatcher = connection.play(`./sounds/${file}.mp3`);
             playing = true;
 
             dispatcher.on('end', () => {
