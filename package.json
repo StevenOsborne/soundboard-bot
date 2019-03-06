@@ -1,0 +1,23 @@
+{
+  "name": "soundboard-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "soundboard-bot.js",
+  "dependencies": {
+    "discord.js": "^11.4.2",
+    "ytdl-core": "^0.29.1"
+  },
+  "devDependencies": {
+    "opusscript": "0.0.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://Ozzy66@bitbucket.org/Ozzy66/soundboard-bot.git"
+  },
+  "author": "Steven Osborne",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/Ozzy66/soundboard-bot#readme"
+}

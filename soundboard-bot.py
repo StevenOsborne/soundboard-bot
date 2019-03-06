@@ -5,7 +5,7 @@
 #Quickmeme - clips shorter than 5 seconds
 #Clip gifs?
 #Most played? Change the way info is stored? Metadata? Or just text file?
-#Intergrate the book of our lord - bible.com has an api
+#Voice recognition?
 
 import logging
 import discord

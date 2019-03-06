@@ -10,5 +10,14 @@ logs/*
 ffmpeg.exe
 ffplay.exe
 ffprobe.exe
+
+#Ignore config
 config.json
+
+#Ignore sound test file
 test.wav
+
+#Ignore node modules
+node_modules/*
+
+package-lock.json
