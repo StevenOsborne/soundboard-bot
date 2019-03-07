@@ -8,20 +8,15 @@ module.exports = {
     args: true,
     usage: '<url> <start> <duration> <name>',
 	execute(message, args) {
+        let [url, start, duration, ...nameArray] = args.map(element => element.replace(/"/g, ''));
+        let nameString = 'sounds/' + nameArray.join("_")
 
-    //args are being split at space, so multiple arguments cause issue if any of them need spaces
-        console.log(args[0]);
-        console.log(args[1]);
-        console.log(args[2]);
-        console.log(args[3]);
-
-        //THIS WORKS
-        // ytdl.getInfo(args[0], {quality: 'highestaudio'}, (err, info) => {
-        //     if (err) throw err;
-        //     const ffmpeg = spawn('ffmpeg', ['-y', '-ss', args[1], '-t', args[2], '-i', info.formats[0].url, '-b:a', '192k', `${args[3]}.mp3`]);
-        //     ffmpeg.stdout.on('data', (data) => {
-        //         console.log(`stdout: ${data}`);
-        //     });
-        //   });
+        ytdl.getInfo(url, {quality: 'highestaudio'}, (err, info) => {
+            if (err) throw err;
+            const ffmpeg = spawn('ffmpeg', ['-y', '-ss', start, '-t', duration, '-i', info.formats[0].url, '-b:a', '192k', `${nameString}.mp3`]);
+            ffmpeg.stdout.on('data', (data) => {
+                console.log(`stdout: ${data}`);
+            });
+          });
 	},
 };

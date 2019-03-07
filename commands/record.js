@@ -23,10 +23,10 @@ module.exports = {
 
                 const audioStream = receiver.createOpusStream(user);
                 // create an output stream so we can dump our data in a file
-                const outputStream = generateOutputFile(user);
+                // const outputStream = generateOutputFile(user);
                 // pipe our audio data into the file stream
-                audioStream.pipe(outputStream);
-                outputStream.on("data", console.log);
+                // audioStream.pipe(outputStream);
+                // outputStream.on("data", console.log);
                 // when the stream ends (the user stopped talking) tell the user
                 audioStream.on('end', () => {
                 message.channel.send(`I'm no longer listening to ${user}`);
