@@ -1,5 +1,5 @@
 const fs = require('fs');
-const spawn = require('child_process');
+const { spawn } = require('child_process');
 
 var receiver;
 
