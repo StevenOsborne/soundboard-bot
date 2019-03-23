@@ -1,9 +1,11 @@
 const fs = require('fs');
+const spawn = require('child_process');
+
 var receiver;
 
 function generateOutputFile(member) {
     // use IDs instead of username cause some people have stupid emojis in their name
-    const fileName = `./${member.id}-${Date.now()}.mp3`;
+    const fileName = `./recordings/${member.id}-${Date.now()}.pcm`;
     return fs.createWriteStream(fileName);
   }
 
@@ -14,24 +16,29 @@ module.exports = {
     voice: true,
 	execute(connection, message, args) {
         if (!receiver) {
-            receiver = connection.createReceiver();
+            receiver = connection.receiver;
         }
 
-        connection.on('speaking', (user, speaking) => {
-            if (speaking) {
-                message.channel.send(`I'm listening to ${user}`);
+        var user = message.member.user;
+        var audioStream;
+        var outputStream;
+            setInterval(function () {
+                if (outputStream) {
+                    outputStream.end();
 
-                const audioStream = receiver.createOpusStream(user);
-                // create an output stream so we can dump our data in a file
-                // const outputStream = generateOutputFile(user);
-                // pipe our audio data into the file stream
-                // audioStream.pipe(outputStream);
-                // outputStream.on("data", console.log);
-                // when the stream ends (the user stopped talking) tell the user
-                audioStream.on('end', () => {
-                message.channel.send(`I'm no longer listening to ${user}`);
-            });
-            }
-        });
+                    var pocketSphinx = spawn('/home/pi/Desktop/pocketsphinx-5prealpha/src/programs/pocketsphinx_continuous',
+                     ['-infile', outputStream.path, '-keyphrase', 'daffodil']);
+
+                     pocketSphinx.stdout.on('data', (data) => {
+                        console.log(`stdout: ${data}`);
+                    });
+                }
+                audioStream = receiver.createStream(user, {mode: 'pcm'});
+                // audioStream.unpipe(outputStream);
+
+                outputStream = generateOutputFile(user);
+
+                audioStream.pipe(outputStream);
+            }, 5000);
 	},
 };
