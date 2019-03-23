@@ -26,9 +26,12 @@ module.exports = {
                 if (outputStream) {
                     outputStream.end();
 
-                    var pocketSphinx = spawn('/home/pi/Desktop/pocketsphinx-5prealpha/src/programs/pocketsphinx_continuous',
-                     ['-infile', outputStream.path, '-keyphrase', 'daffodil']);
+                    // var pocketSphinx = spawn('/home/pi/Desktop/pocketsphinx-5prealpha/src/programs/pocketsphinx_continuous',
+                    //  ['-infile', outputStream.path, '-keyphrase', 'daffodil']);
 
+                     var pocketSphinx = spawn('/home/pi/Desktop/pocketsphinx-5prealpha/src/programs/pocketsphinx_continuous',
+                     ['-infile', '/home/pi/Desktop/pocketsphinx-5prealpha/src/programs/274649816217157632-1552163246973.pcm', '-keyphrase', 'daffodil']);
+                    
                      pocketSphinx.stdout.on('data', (data) => {
                         console.log(`stdout: ${data}`);
                     });
