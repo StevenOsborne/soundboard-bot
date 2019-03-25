@@ -6,8 +6,7 @@ const modeldir = "/usr/local/share/pocketsphinx/model/en-us/";
 var receiver;
 var config = new ps.Decoder.defaultConfig();
 config.setString("-hmm", modeldir + "en-us");
-config.setString("-dict", modeldir + "cmudict-en-us.dict");
-config.setString("-lm", modeldir + "en-us.lm.bin");
+config.setString("keyphrase", "daffodil");
 
 function generateOutputFile(member) {
     // use IDs instead of username cause some people have stupid emojis in their name
