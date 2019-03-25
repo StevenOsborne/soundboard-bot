@@ -28,15 +28,15 @@ module.exports = {
         var user = message.member.user;
         var decoder = new ps.Decoder(config);
         var audioStream = receiver.createStream(user, {mode: 'pcm', end: 'manual'}); //end = manual ?
+        //NEED TO MANUALLY END AUDIOSTREAM
 
-        // decoder.startUtt();
+        decoder.startUtt();
         audioStream.on('data', (chunk) => {
-            console.log(`Received ${chunk.length} bytes of data.`);
-            // decoder.processRaw(data, false, false);
-            // console.log(decoder.hyp());
-            // if (decoder.hyp() == "something") {
-            //     decoder.endUtt();
-            // }
+            decoder.processRaw(chunk, false, false);
+            console.log(decoder.hyp());
+            if (decoder.hyp() == "daffodil") {
+                decoder.endUtt();
+            }
         });
 
         // var pocketSphinx = spawn('/home/pi/Desktop/pocketsphinx-5prealpha/src/programs/pocketsphinx_continuous',
