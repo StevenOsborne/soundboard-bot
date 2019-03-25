@@ -1,7 +1,10 @@
 const fs = require('fs');
-const { spawn } = require('child_process');
+const ps = require('node-pocketsphinx').ps;
+
+const modeldir = "../pocketsphinx-5prealpha/model/en-us/en-us/"; //Might no need? Defaults might do
 
 var receiver;
+var config = new ps.Decoder.defaultConfig();
 
 function generateOutputFile(member) {
     // use IDs instead of username cause some people have stupid emojis in their name
@@ -20,28 +23,28 @@ module.exports = {
         }
 
         var user = message.member.user;
-        var audioStream;
-        var outputStream;
-            setInterval(function () {
-                if (outputStream) {
-                    outputStream.end();
+        var decoder = new ps.Decoder(config);
+        var audioStream = receiver.createStream(user, {mode: 'pcm'}); //end = manual ?
 
-                    // var pocketSphinx = spawn('/home/pi/Desktop/pocketsphinx-5prealpha/src/programs/pocketsphinx_continuous',
-                    //  ['-infile', outputStream.path, '-keyphrase', 'daffodil']);
+        decoder.startUtt();
+        audioStream.on('data', function(data) {
+            decoder.processRaw(data, false, false);
+            console.log(decoder.hyp());
+            if (decoder.hyp() == "something") {
+                decoder.endUtt();
+                mic.stopCapture();
+            }
+        });
 
-                     var pocketSphinx = spawn('/home/pi/Desktop/pocketsphinx-5prealpha/src/programs/pocketsphinx_continuous',
-                     ['-infile', '/home/pi/Desktop/pocketsphinx-5prealpha/src/programs/274649816217157632-1552163246973.pcm', '-keyphrase', 'daffodil']);
-                    
-                     pocketSphinx.stdout.on('data', (data) => {
-                        console.log(`stdout: ${data}`);
-                    });
-                }
-                audioStream = receiver.createStream(user, {mode: 'pcm'});
-                // audioStream.unpipe(outputStream);
+        // var pocketSphinx = spawn('/home/pi/Desktop/pocketsphinx-5prealpha/src/programs/pocketsphinx_continuous',
+        //     ['-infile', outputStream.path, '-keyphrase', 'daffodil']);
 
-                outputStream = generateOutputFile(user);
+        //     pocketSphinx.stdout.on('data', (data) => {
+        //     console.log(`stdout: ${data}`);
+        // });
 
-                audioStream.pipe(outputStream);
-            }, 5000);
+        // pocketSphinx.stderr.on('data', (data) => {
+        //     console.log(`stderr: ${data}`);
+        // });
 	},
 };
