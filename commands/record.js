@@ -27,7 +27,7 @@ module.exports = {
 
         var user = message.member.user;
         var decoder = new ps.Decoder(config);
-        var audioStream = receiver.createStream(user, {mode: 'pcm'}); //end = manual ?
+        var audioStream = receiver.createStream(user, {mode: 'pcm', end: 'manual'}); //end = manual ?
 
         // decoder.startUtt();
         audioStream.on('data', (chunk) => {
