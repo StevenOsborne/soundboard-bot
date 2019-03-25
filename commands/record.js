@@ -6,6 +6,7 @@ const modeldir = "/usr/local/share/pocketsphinx/model/en-us/";
 var receiver;
 var config = new ps.Decoder.defaultConfig();
 config.setString("-hmm", modeldir + "en-us");
+config.setString("-dict", modeldir + "cmudict-en-us.dict");
 config.setString("-keyphrase", "daffodil");
 
 function generateOutputFile(member) {
