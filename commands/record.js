@@ -29,14 +29,14 @@ module.exports = {
         var decoder = new ps.Decoder(config);
         var audioStream = receiver.createStream(user, {mode: 'pcm'}); //end = manual ?
 
-        decoder.startUtt();
-        audioStream.on('data', function(data) {
-            decoder.processRaw(data, false, false);
-            console.log(decoder.hyp());
-            if (decoder.hyp() == "something") {
-                decoder.endUtt();
-                mic.stopCapture();
-            }
+        // decoder.startUtt();
+        audioStream.on('data', (chunk) => {
+            console.log(`Received ${chunk.length} bytes of data.`);
+            // decoder.processRaw(data, false, false);
+            // console.log(decoder.hyp());
+            // if (decoder.hyp() == "something") {
+            //     decoder.endUtt();
+            // }
         });
 
         // var pocketSphinx = spawn('/home/pi/Desktop/pocketsphinx-5prealpha/src/programs/pocketsphinx_continuous',
