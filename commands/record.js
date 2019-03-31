@@ -9,6 +9,7 @@ config.setString("-hmm", modeldir + "en-us");
 config.setString("-dict", modeldir + "cmudict-en-us.dict");
 config.setString("-keyphrase", "daffodil");
 config.setString("-kws_threshold", "1e-12");
+config.setString("-logfn", "pocketSphinx_log.txt");
 
 function generateOutputFile(member) {
     // use IDs instead of username cause some people have stupid emojis in their name
