@@ -73,7 +73,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     if (!oldUserChannel || (oldUserChannel && newUserChannel)) {
        if (voiceConnection && newUserChannel.id === voiceConnection.channel.id) {
            console.log("Joined bots channel");
-           client.commands.get("record");
+           client.commands.get("record").execute;
        }
   
     } else if (!newUserChannel) {
