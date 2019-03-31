@@ -37,9 +37,9 @@ module.exports = {
             decoder.processRaw(chunk, false, false);
             var hyp = decoder.hyp();
             if (hyp != null) {
-                console.log(hyp);
                 console.log(hyp.hypstr);
-                // decoder.endUtt();
+                decoder.endUtt();
+                decoder.startUtt();
             }
         });
 
