@@ -66,9 +66,9 @@ client.on('message', async message => {
     }
 });
 
-client.on('voiceStateUpdate', (oldMember, newMember) => {
-    let newUserChannel = newMember.voiceChannel
-    let oldUserChannel = oldMember.voiceChannel
+client.on('voiceStateUpdate', (oldState, newState) => {
+    let newUserChannel = newState.member.voiceChannel
+    let oldUserChannel = oldState.member.voiceChannel
   
     if (oldUserChannel === undefined && newUserChannel !== undefined) {
   
