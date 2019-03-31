@@ -43,7 +43,7 @@ module.exports = {
             var hyp = decoder.hyp();
             if (hyp != null) {
                 decoder.endUtt();
-                meme.execute(connection, message, args);
+                meme.execute(connection, null, args);
                 decoder.startUtt();
             }
         });
