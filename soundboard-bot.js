@@ -1,3 +1,7 @@
+//TODO
+//End audiostream and utterance when they leave
+//Start recording for everyone in channel when bot joins
+
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
@@ -81,7 +85,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     } else if (!newUserChannel) {
         if (voiceConnection && oldUserChannel.id === voiceConnection.channel.id)
         console.log("Left bots channel");
-        //End recording
+        client.commands.get("record").end(newState.member.user);
     }
   })
 

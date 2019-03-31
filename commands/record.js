@@ -1,7 +1,3 @@
-//TODO
-//End audiostream and utterance when they leave
-//
-
 const meme = require('./meme.js')
 const fs = require('fs');
 const ps = require('node-pocketsphinx').ps;
@@ -15,6 +11,7 @@ config.setString("-dict", modeldir + "cmudict-en-us.dict");
 config.setString("-keyphrase", "daffodil");
 config.setString("-kws_threshold", "1e-12");
 config.setString("-logfn", "pocketSphinx_log.txt");
+var decoder = new ps.Decoder(config);
 
 function generateOutputFile(member) {
     // use IDs instead of username cause some people have stupid emojis in their name
@@ -33,22 +30,21 @@ module.exports = {
             receiver = connection.receiver;
         }
 
-        var decoder = new ps.Decoder(config);
         var audioStream = receiver.createStream(user, {mode: 'pcm', end: 'manual'});
         //NEED TO MANUALLY END AUDIOSTREAM
 
         decoder.startUtt();
+        console.log("Start utterance - decoder: " + decoder)
         audioStream.on('data', (chunk) => {
             decoder.processRaw(chunk, false, false);
             var hyp = decoder.hyp();
             if (hyp != null) {
                 decoder.endUtt();
+                console.log("End utterance - decoder: " + decoder)
                 meme.execute(connection, null, args);
                 decoder.startUtt();
             }
         });
-
-        //endUtt when closing the audiostream (when user leaves)
 
         // fs.readFile("daffodil/mono_16k_single.pcm", function(err, data) {
         //     if (err) throw err;
@@ -57,5 +53,8 @@ module.exports = {
         //     decoder.endUtt();
         //     console.log(decoder.hyp())
         // });
-	},
+    },
+    end(user) {
+
+    },
 };
