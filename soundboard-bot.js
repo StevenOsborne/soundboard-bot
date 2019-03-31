@@ -77,8 +77,8 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     let oldUserChannel = oldState.channel;
 
     if (!oldUserChannel || (oldUserChannel && newUserChannel)) {
-       if (voiceConnection && 
-        (newUserChannel.id === voiceConnection.channel.id && oldUserChannel.id !== voiceConnection.channel.id)) {
+       if (voiceConnection && (newUserChannel.id === voiceConnection.channel.id &&
+         (!oldUserChannel || oldUserChannel.id !== voiceConnection.channel.id))) {
            console.log("Joined bots channel");
            client.commands.get("record").execute(voiceConnection, newState.member.user, null);
        }
