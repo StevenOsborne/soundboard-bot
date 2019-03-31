@@ -40,7 +40,7 @@ module.exports = {
         //     }
         // });
 
-        fs.readFile("daffodil/mono_48k_single.pcm", function(err, data) {
+        fs.readFile("daffodil/mono_16k_single.pcm", function(err, data) {
             if (err) throw err;
             decoder.startUtt();
             decoder.processRaw(data, false, false);
