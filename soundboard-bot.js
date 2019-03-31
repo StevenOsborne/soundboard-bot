@@ -73,14 +73,14 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     console.log(newUserChannel);
     console.log(oldUserChannel);
 
-    if (oldUserChannel === undefined && newUserChannel !== undefined) {
+    if (!oldUserChannel && newUserChannel) {
+       console.log("Joined");
+       if (voiceConnection && newUserChannel.id === voiceConnection.channel.id) {
+           console.log("Joined bots channel");
+       }
   
-       console.log("joined");
-  
-    } else if (newUserChannel === undefined) {
-  
-        console.log("left");
-  
+    } else if (!newUserChannel) {
+        console.log("Left");
     }
   })
 
