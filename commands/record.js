@@ -11,8 +11,8 @@ config.setString("-dict", modeldir + "cmudict-en-us.dict");
 config.setString("-keyphrase", "daffodil");
 config.setString("-kws_threshold", "1e-12");
 config.setString("-logfn", "pocketSphinx_log.txt");
-var decoder = new ps.Decoder(config);
 var userStreams = [];
+var userDecoders = [];
 
 function generateOutputFile(member) {
     // use IDs instead of username cause some people have stupid emojis in their name
@@ -31,20 +31,20 @@ module.exports = {
             receiver = connection.receiver;
         }
 
-        var audioStream = receiver.createStream(user, {mode: 'pcm', end: 'manual'});
-        userStreams[user] = audioStream;
-        //NEED TO MANUALLY END AUDIOSTREAM
+        userStreams[user] = receiver.createStream(user, {mode: 'pcm', end: 'manual'});
+        userDecoders[user] = new ps.Decoder(config);
+
     try {
-        decoder.startUtt();
-        console.log("Start utterance - decoder: " + decoder)
-        audioStream.on('data', (chunk) => {
-            decoder.processRaw(chunk, false, false);
-            var hyp = decoder.hyp();
+        userDecoders[user].startUtt();
+        console.log("Start utterance");
+        userStreams[user].on('data', (chunk) => {
+            userDecoders[user].processRaw(chunk, false, false);
+            var hyp = userDecoders[user].hyp();
             if (hyp != null) {
-                decoder.endUtt();
-                console.log("End utterance - decoder: " + decoder)
+                userDecoders[user].endUtt();
+                console.log("End utterance")
                 meme.execute(connection, null, args);
-                decoder.startUtt();
+                userDecoders[user].startUtt();
             }
         });
     } catch (error) {
@@ -60,6 +60,12 @@ module.exports = {
         // });
     },
     end(user) {
-        console.log(userStreams[user])
+        if (userStreams[user]) {
+            userStreams[user].destroy();
+        }
+
+        if (userDecoders[user]) {
+            userDecoders[user].endUtt();
+        }
     },
 };
