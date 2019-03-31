@@ -12,6 +12,7 @@ config.setString("-keyphrase", "daffodil");
 config.setString("-kws_threshold", "1e-12");
 config.setString("-logfn", "pocketSphinx_log.txt");
 var decoder = new ps.Decoder(config);
+var userStreams = [];
 
 function generateOutputFile(member) {
     // use IDs instead of username cause some people have stupid emojis in their name
@@ -31,8 +32,9 @@ module.exports = {
         }
 
         var audioStream = receiver.createStream(user, {mode: 'pcm', end: 'manual'});
+        userStreams[user] = audioStream;
         //NEED TO MANUALLY END AUDIOSTREAM
-
+    try {
         decoder.startUtt();
         console.log("Start utterance - decoder: " + decoder)
         audioStream.on('data', (chunk) => {
@@ -45,6 +47,9 @@ module.exports = {
                 decoder.startUtt();
             }
         });
+    } catch (error) {
+        console.error(error);
+    }
 
         // fs.readFile("daffodil/mono_16k_single.pcm", function(err, data) {
         //     if (err) throw err;
@@ -55,6 +60,6 @@ module.exports = {
         // });
     },
     end(user) {
-
+        console.log(userStreams[user])
     },
 };
