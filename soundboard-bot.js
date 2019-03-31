@@ -66,4 +66,19 @@ client.on('message', async message => {
     }
 });
 
+client.on('voiceStateUpdate', (oldMember, newMember) => {
+    let newUserChannel = newMember.voiceChannel
+    let oldUserChannel = oldMember.voiceChannel
+  
+    if (oldUserChannel === undefined && newUserChannel !== undefined) {
+  
+       console.log("joined");
+  
+    } else if (newUserChannel === undefined) {
+  
+        console.log("left");
+  
+    }
+  })
+
 client.login(token);
