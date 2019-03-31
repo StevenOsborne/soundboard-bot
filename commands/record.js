@@ -27,26 +27,28 @@ module.exports = {
             receiver = connection.receiver;
         }
 
-        // var user = message.member.user;
+        var user = message.member.user;
         var decoder = new ps.Decoder(config);
-        // var audioStream = receiver.createStream(user, {mode: 'pcm', end: 'manual'}); //end = manual ?
+        var audioStream = receiver.createStream(user, {mode: 'pcm', end: 'manual'}); //end = manual ?
         //NEED TO MANUALLY END AUDIOSTREAM
 
-        // decoder.startUtt();
-        // audioStream.on('data', (chunk) => {
-        //     decoder.processRaw(chunk, false, false);
-        //     console.log(decoder.hyp());
-        //     if (decoder.hyp() == "daffodil") {
-        //         decoder.endUtt();
-        //     }
-        // });
-
-        fs.readFile("daffodil/mono_16k_single.pcm", function(err, data) {
-            if (err) throw err;
-            decoder.startUtt();
-            decoder.processRaw(data, false, false);
-            decoder.endUtt();
-            console.log(decoder.hyp())
+        decoder.startUtt();
+        audioStream.on('data', (chunk) => {
+            decoder.processRaw(chunk, false, false);
+            console.log(decoder.hyp());
+            if (decoder.hyp() != null) {
+                console.log("BOOM");
+                console.log(decoder.hyp());
+                decoder.endUtt();
+            }
         });
+
+        // fs.readFile("daffodil/mono_16k_single.pcm", function(err, data) {
+        //     if (err) throw err;
+        //     decoder.startUtt();
+        //     decoder.processRaw(data, false, false);
+        //     decoder.endUtt();
+        //     console.log(decoder.hyp())
+        // });
 	},
 };
