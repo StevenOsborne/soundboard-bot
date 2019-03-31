@@ -70,6 +70,9 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     let newUserChannel = newState.channel;
     let oldUserChannel = oldState.channel;
     
+    console.log(newUserChannel);
+    console.log(oldUserChannel);
+
     if (oldUserChannel === undefined && newUserChannel !== undefined) {
   
        console.log("joined");
