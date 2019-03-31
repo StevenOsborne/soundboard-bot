@@ -76,17 +76,18 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     let newUserChannel = newState.channel;
     let oldUserChannel = oldState.channel;
 
-    if (!oldUserChannel || (oldUserChannel && newUserChannel)) {
+    if (newUserChannel) {
        if (voiceConnection && (newUserChannel.id === voiceConnection.channel.id &&
          (!oldUserChannel || oldUserChannel.id !== voiceConnection.channel.id))) {
            console.log("Joined bots channel");
            client.commands.get("record").execute(voiceConnection, newState.member.user, null);
        }
   
-    } else if (!newUserChannel) {
-        if (voiceConnection && oldUserChannel.id === voiceConnection.channel.id)
-        console.log("Left bots channel");
-        client.commands.get("record").end(newState.member.user);
+    } else if (oldUserChannel) {
+        if (voiceConnection && oldUserChannel.id === voiceConnection.channel.id) {
+            console.log("Left bots channel");
+            client.commands.get("record").end(newState.member.user);
+        }
     }
   })
 
