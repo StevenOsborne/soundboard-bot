@@ -1,3 +1,8 @@
+//TODO
+//Start recording when someone joins
+//End audiostream and utterance when they leave
+
+const meme = require('./meme.js')
 const fs = require('fs');
 const ps = require('node-pocketsphinx').ps;
 
@@ -37,8 +42,8 @@ module.exports = {
             decoder.processRaw(chunk, false, false);
             var hyp = decoder.hyp();
             if (hyp != null) {
-                console.log(hyp.hypstr);
                 decoder.endUtt();
+                meme.execute(connection, message, args);
                 decoder.startUtt();
             }
         });
