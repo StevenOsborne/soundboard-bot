@@ -1,6 +1,6 @@
 //TODO
-//Start recording when someone joins
 //End audiostream and utterance when they leave
+//
 
 const meme = require('./meme.js')
 const fs = require('fs');
@@ -25,14 +25,14 @@ function generateOutputFile(member) {
 module.exports = {
 	name: 'record',
     description: 'Records audio',
+    callable: false,
     args: false,
     voice: true,
-	execute(connection, message, args) {
+	execute(connection, user, args) {
         if (!receiver) {
             receiver = connection.receiver;
         }
 
-        var user = message.member.user;
         var decoder = new ps.Decoder(config);
         var audioStream = receiver.createStream(user, {mode: 'pcm', end: 'manual'});
         //NEED TO MANUALLY END AUDIOSTREAM

@@ -46,18 +46,20 @@ client.on('message', async message => {
     }
 
     try {
-        if (command.voice) {
-            if (voiceConnection) {
-                command.execute(voiceConnection, message, args);
+        if (command.callable) {
+            if (command.voice) {
+                if (voiceConnection) {
+                    command.execute(voiceConnection, message, args);
+                } else {
+                    await getConnection(message)
+                        .then(connection => {
+                            voiceConnection = connection;
+                            command.execute(connection, message, args);
+                        });
+                }
             } else {
-                await getConnection(message)
-                    .then(connection => {
-                        voiceConnection = connection;
-                        command.execute(connection, message, args);
-                    });
+                command.execute(message, args);
             }
-        } else {
-            command.execute(message, args);
         }
         
     } catch (error) {
@@ -73,7 +75,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     if (!oldUserChannel || (oldUserChannel && newUserChannel)) {
        if (voiceConnection && newUserChannel.id === voiceConnection.channel.id) {
            console.log("Joined bots channel");
-           client.commands.get("record").execute;
+           client.commands.get("record").execute(voiceConnection, newUserChannel.member.user, null);
        }
   
     } else if (!newUserChannel) {
