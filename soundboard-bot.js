@@ -46,7 +46,7 @@ client.on('message', async message => {
     }
 
     try {
-        if (command.callable) {
+        if (!command.notCallable) {
             if (command.voice) {
                 if (voiceConnection) {
                     command.execute(voiceConnection, message, args);

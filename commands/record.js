@@ -25,7 +25,7 @@ function generateOutputFile(member) {
 module.exports = {
 	name: 'record',
     description: 'Records audio',
-    callable: false,
+    notCallable: true,
     args: false,
     voice: true,
 	execute(connection, user, args) {
