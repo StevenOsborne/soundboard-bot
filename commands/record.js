@@ -11,6 +11,7 @@ config.setString("-dict", modeldir + "cmudict-en-us.dict");
 config.setString("-keyphrase", "daffodil");
 config.setString("-kws_threshold", "1e-12");
 config.setString("-logfn", "pocketSphinx_log.txt");
+var listeningToUsers = [];
 var userStreams = [];
 var userDecoders = [];
 
@@ -33,6 +34,7 @@ module.exports = {
 
         userStreams[user] = receiver.createStream(user, {mode: 'pcm', end: 'manual'});
         userDecoders[user] = new ps.Decoder(config);
+        listeningToUsers[user] = true;
 
     try {
         userDecoders[user].startUtt();
@@ -42,7 +44,8 @@ module.exports = {
             var hyp = userDecoders[user].hyp();
             if (hyp != null) {
                 userDecoders[user].endUtt();
-                console.log("End utterance")
+                console.log(hyp);
+                console.log("keyphrase detected - End utterance")
                 meme.execute(connection, null, args);
                 userDecoders[user].startUtt();
             }
@@ -60,12 +63,14 @@ module.exports = {
         // });
     },
     end(user) {
-        if (userStreams[user]) {
-            userStreams[user].end();
-        }
+        if (listeningToUsers[user]) {
+            if (userStreams[user]) {
+                userStreams[user].end();
+            }
 
-        if (userDecoders[user]) {
-            userDecoders[user].endUtt();
+            if (userDecoders[user]) {
+                userDecoders[user].endUtt();
+            }
         }
     },
 };
