@@ -57,8 +57,11 @@ client.on('message', async message => {
                     await getConnection(message)
                         .then(connection => {
                             voiceConnection = connection;
-                            connection.channel.members.each(member => 
-                                recordCommand.execute(connection, member.user, null));
+                            connection.channel.members.each(member => function(member) {
+                                if (member.user.tag !== client.user.tag) {
+                                    recordCommand.execute(connection, member.user, null)
+                                }
+                            });
                             command.execute(connection, message, args);
                         });
                 }
