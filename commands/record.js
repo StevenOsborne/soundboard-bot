@@ -1,4 +1,5 @@
 const meme = require('./meme.js')
+const play = require('./play.js')
 const fs = require('fs');
 const ps = require('node-pocketsphinx').ps;
 
@@ -47,7 +48,11 @@ module.exports = {
                 userDecoders[user].endUtt();
                 console.log(hyp);
                 console.log("keyphrase detected - End utterance")
-                meme.execute(connection, null, args);
+                if (hyp.hypstr == 'daffodil ') {
+                    meme.execute(connection, null, args);
+                } else if (hyp.hypstr == 'skip ') {
+                    play.skip();
+                }
                 userDecoders[user].startUtt();
             }
         });
