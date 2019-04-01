@@ -70,6 +70,7 @@ module.exports = {
     },
     end(user) {
         if (listeningToUsers[user]) {
+            listeningToUsers[user] = false;
             if (userStreams[user]) {
                 userStreams[user].end();
             }
