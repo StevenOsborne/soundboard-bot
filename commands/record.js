@@ -61,7 +61,7 @@ module.exports = {
     },
     end(user) {
         if (userStreams[user]) {
-            userStreams[user].destroy();
+            userStreams[user].end();
         }
 
         if (userDecoders[user]) {

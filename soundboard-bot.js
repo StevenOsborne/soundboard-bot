@@ -1,5 +1,5 @@
 //TODO
-//End audiostream and utterance when they leave
+//End audiostream and utterance when they leave - I think this is working?
 //Start recording for everyone in channel when bot joins
 
 const fs = require('fs');
@@ -10,13 +10,12 @@ const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-var voiceConnection
-
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	client.commands.set(command.name, command);
 }
+var voiceConnection
+const recordCommand = client.commands.get("record");
 
 async function getConnection(message) {
     console.log("Joining voice channel")
@@ -58,6 +57,8 @@ client.on('message', async message => {
                     await getConnection(message)
                         .then(connection => {
                             voiceConnection = connection;
+                            connection.channel.members.each(member => 
+                                recordCommand.execute(connection, member.user, null));
                             command.execute(connection, message, args);
                         });
                 }
@@ -79,14 +80,14 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     if (newUserChannel) {
        if (voiceConnection && (newUserChannel.id === voiceConnection.channel.id &&
          (!oldUserChannel || oldUserChannel.id !== voiceConnection.channel.id))) {
-           console.log("Joined bots channel");
-           client.commands.get("record").execute(voiceConnection, newState.member.user, null);
+           console.log(`${newState.member.user.tag} Joined bots channel`);
+           recordCommand.execute(voiceConnection, newState.member.user, null);
        }
   
     } else if (oldUserChannel) {
         if (voiceConnection && oldUserChannel.id === voiceConnection.channel.id) {
-            console.log("Left bots channel");
-            client.commands.get("record").end(newState.member.user);
+            console.log(`${oldState.member.user.tag} Left bots channel`);
+            recordCommand.end(oldState.member.user);
         }
     }
   })
