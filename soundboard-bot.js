@@ -100,7 +100,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
                 console.log(`${newState.member.user.tag} Joined bots channel`);
                 recordCommand.execute(voiceConnection, newState.member.user, null);
             } else if (oldUserChannel && oldUserChannel.id === voiceConnection.channel.id &&
-                newUserChannel.id !== newUserChannel.channel.id) {
+                newUserChannel.id !== voiceConnection.channel.id) {
                 console.log(`${oldState.member.user.tag} Moved from bots channel`);
                 recordCommand.end(oldState.member.user);
             }
