@@ -1,10 +1,13 @@
 //TODO
-//End audiostream and utterance when they leave - I think this is working?
-//Start recording for everyone in channel when bot joins
+//Utterance seems to stop working after a while - or is it the audiostream?
+//Entrace music
 
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
+const { Readable } = require('stream');
+
+const SILENCE_FRAME = Buffer.from([0xF8, 0xFF, 0xFE]);
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -23,6 +26,12 @@ async function getConnection(message) {
         return message.member.voice.channel.join()
     }
 }
+
+class Silence extends Readable {
+    _read() {
+      this.push(SILENCE_FRAME);
+    }
+  }
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -57,6 +66,7 @@ client.on('message', async message => {
                     await getConnection(message)
                         .then(connection => {
                             voiceConnection = connection;
+                            voiceConnection.play(new Silence(), { type: 'opus' });
                             connection.channel.members.each(member => {
                                 console.log(member.user.tag);
                                 if (member.user.tag !== client.user.tag) {
@@ -89,7 +99,8 @@ client.on('voiceStateUpdate', (oldState, newState) => {
             (!oldUserChannel || oldUserChannel.id !== voiceConnection.channel.id)) {
                 console.log(`${newState.member.user.tag} Joined bots channel`);
                 recordCommand.execute(voiceConnection, newState.member.user, null);
-            } else if (oldUserChannel && oldUserChannel.id === voiceConnection.channel.id) {
+            } else if (oldUserChannel && oldUserChannel.id === voiceConnection.channel.id &&
+                newUserChannel.id !== newUserChannel.channel.id) {
                 console.log(`${oldState.member.user.tag} Moved from bots channel`);
                 recordCommand.end(oldState.member.user);
             }
