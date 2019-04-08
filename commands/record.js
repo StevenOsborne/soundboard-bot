@@ -40,10 +40,8 @@ module.exports = {
 
         try {
             userDecoders[user].startUtt();
-            console.log();
             console.log("Start utterance");
             userStreams[user].on('data', (chunk) => {
-                console.log()
                 userDecoders[user].processRaw(chunk, false, false);
                 var hyp = userDecoders[user].hyp();
                 if (hyp != null) {
