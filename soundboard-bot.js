@@ -1,7 +1,3 @@
-//TODO
-//Utterance seems to stop working after a while - or is it the audiostream?
-//Entrace music
-
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
@@ -66,6 +62,7 @@ client.on('message', async message => {
                     await getConnection(message)
                         .then(connection => {
                             voiceConnection = connection;
+                            //Fix for losing voice receiver after 5 mins
                             voiceConnection.play(new Silence(), { type: 'opus' });
                             connection.channel.members.each(member => {
                                 console.log(member.user.tag);
