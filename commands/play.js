@@ -29,6 +29,6 @@ module.exports = {
         }
     },
     skip() {
-        if (dispatcher) dispatcher.destroy();
+        if (dispatcher) dispatcher.end();
     },
 };
