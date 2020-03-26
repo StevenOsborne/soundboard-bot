@@ -14,6 +14,7 @@ module.exports = {
 
         let file = args.toString().replace(/,/g, '_').replace(/"/g, '');
         
+        console.log(playing);
         if (playing) {
             queue.push(file);
         } else {
@@ -21,13 +22,13 @@ module.exports = {
             dispatcher = connection.play(`./sounds/${file}.mp3`);
             playing = true;
 
-            dispatcher.on('end', () => {
+            dispatcher.on('finish', () => {
                 playing = false;
                 this.execute(connection, message, queue.pop());
             });
         }
     },
     skip() {
-        if (dispatcher) dispatcher.end();
+        if (dispatcher) dispatcher.destroy();
     },
 };

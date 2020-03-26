@@ -4,8 +4,9 @@
   "description": "",
   "main": "soundboard-bot.js",
   "dependencies": {
+    "@discordjs/opus": "^0.1.0",
     "discord.js": "github:discordjs/discord.js",
-    "ytdl-core": "^0.29.1"
+    "ytdl-core": "^2.0.1"
   },
   "devDependencies": {
     "opusscript": "0.0.6"
