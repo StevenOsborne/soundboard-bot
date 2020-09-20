@@ -6,6 +6,10 @@ const {
     BUMBLEBEE,
   } = require("@picovoice/porcupine-node/builtin_keywords");
 
+var receiver;
+var listeningToUsers = [];
+var userStreams = [];
+
 module.exports = {
     name: 'recordV2',
     description: 'Records audio',
