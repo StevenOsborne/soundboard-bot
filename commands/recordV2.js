@@ -23,8 +23,8 @@ module.exports = {
             receiver = connection.receiver;
         }
 
-        console.log(userHandlers[user].sample_rate);
-        console.log(userHandlers[user].frame_length);
+        console.log(userHandlers[user].sample_rate());
+        console.log(userHandlers[user].frame_length());
 
         userStreams[user] = receiver.createStream(user, {mode: 'pcm', end: 'manual'});
         listeningToUsers[user] = true;
