@@ -14,7 +14,7 @@ for (const file of commandFiles) {
 	client.commands.set(command.name, command);
 }
 var voiceConnection
-const recordCommand = client.commands.get("record");
+const recordCommand = client.commands.get("recordV2");
 
 async function getConnection(message) {
     console.log("Joining voice channel")
@@ -67,7 +67,7 @@ client.on('message', async message => {
                             connection.channel.members.each(member => {
                                 console.log(member.user.tag);
                                 if (member.user.tag !== client.user.tag) {
-                                    // recordCommand.execute(connection, member.user, null)
+                                    recordCommand.execute(connection, member.user, null)
                                 }
                             });
                             command.execute(connection, message, args);
@@ -95,17 +95,17 @@ client.on('voiceStateUpdate', (oldState, newState) => {
            if (newUserChannel.id === voiceConnection.channel.id &&
             (!oldUserChannel || oldUserChannel.id !== voiceConnection.channel.id)) {
                 console.log(`${newState.member.user.tag} Joined bots channel`);
-                // recordCommand.execute(voiceConnection, newState.member.user, null);
+                recordCommand.execute(voiceConnection, newState.member.user, null);
             } else if (oldUserChannel && oldUserChannel.id === voiceConnection.channel.id &&
                 newUserChannel.id !== voiceConnection.channel.id) {
                 console.log(`${oldState.member.user.tag} Moved from bots channel`);
-                // recordCommand.end(oldState.member.user);
+                recordCommand.end(oldState.member.user);
             }
         }
     } else if (oldUserChannel) {
         if (voiceConnection && oldUserChannel.id === voiceConnection.channel.id) {
             console.log(`${oldState.member.user.tag} Left bots channel`);
-            // recordCommand.end(oldState.member.user);
+            recordCommand.end(oldState.member.user);
         }
     }
   })
