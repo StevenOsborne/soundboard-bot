@@ -18,28 +18,29 @@ module.exports = {
     args: false,
     voice: true,
     execute(connection, user, args) {
-        userHandlers[user] = new Porcupine([GRASSHOPPER, BUMBLEBEE], [0.5, 0.65]);//Should we have instance per user?
+        userHandlers[user] = new Porcupine([GRASSHOPPER, BUMBLEBEE], [0.5, 0.65]);
         if (!receiver) {
             receiver = connection.receiver;
         }
 
-        console.log(userHandlers[user].sample_rate());
-        console.log(userHandlers[user].frame_length());
+        console.log(userHandlers[user].sample_rate);
+        console.log(userHandlers[user].frame_length);
 
         userStreams[user] = receiver.createStream(user, {mode: 'pcm', end: 'manual'});
         listeningToUsers[user] = true;
 
         try {
             console.log("Start utterance");
-            userStreams[user].on('data', (chunk) => {
-                let keywordIndex = userHandlers[user].process(chunk);
+            userStreams[user].on('data', (chunk) => {//Need to make stream single channel frame size 512
+                console.log(chunk.length);
+                console.log(chunk);
+                console.log(Object.keys(chunk));
+                // let keywordIndex = userHandlers[user].process(chunk);
 
-                if (keywordIndex != -1) {
-                    meme.execute(connection, null, args);
-                }
+                // if (keywordIndex != -1) {
+                //     meme.execute(connection, null, args);
+                // }
             });
-            // process a single frame of audio
-            // the keywordIndex provies the index of the keyword detected, or -1 if no keyword was detected
         } catch (error) {
             console.error(error);
         }
