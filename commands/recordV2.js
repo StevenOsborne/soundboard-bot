@@ -37,12 +37,11 @@ module.exports = {
         try {
             console.log("Start utterance");
             decoder.on('data', (chunk) => {//Need to make stream single channel frame size 512
-                console.log(chunk.length);
-                // let keywordIndex = userHandlers[user].process(chunk);
+                let keywordIndex = userHandlers[user].process(chunk);
 
-                // if (keywordIndex != -1) {
-                //     meme.execute(connection, null, args);
-                // }
+                if (keywordIndex != -1) {
+                    meme.execute(connection, null, args);
+                }
             });
         } catch (error) {
             console.error(error);
