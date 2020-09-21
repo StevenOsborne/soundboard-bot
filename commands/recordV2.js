@@ -28,7 +28,7 @@ module.exports = {
         console.log(userHandlers[user].frame_length);
 
         userStreams[user] = receiver.createStream(user, {mode: 'opus', end: 'manual'});
-        const decoder = new prism.opus.Decoder({ channels: 1, rate: 16000, frameSize: 512 });
+        const decoder = new prism.opus.Decoder({ channels: 1, rate: 16000, frameSize: 256 });
 
         userStreams[user].pipe(decoder)
 
@@ -37,6 +37,7 @@ module.exports = {
         try {
             console.log("Start utterance");
             decoder.on('data', (chunk) => {//Need to make stream single channel frame size 512
+                console.log(chunk.length);
                 let keywordIndex = userHandlers[user].process(chunk);
 
                 if (keywordIndex != -1) {
