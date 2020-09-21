@@ -1,5 +1,6 @@
 const meme = require('./meme.js')
 const play = require('./play.js')
+const prism = require('prism-media');
 const Porcupine = require("@picovoice/porcupine-node");
 const {
     GRASSHOPPER,
@@ -27,14 +28,16 @@ module.exports = {
         console.log(userHandlers[user].frame_length);
 
         userStreams[user] = receiver.createStream(user, {mode: 'pcm', end: 'manual'});
+        const decoder = new prism.opus.Decoder({ channels: 1, rate: 16000, frameSize: 512 });
+
+        userStreams[user].pipe(decoder)
+
         listeningToUsers[user] = true;
 
         try {
             console.log("Start utterance");
-            userStreams[user].on('data', (chunk) => {//Need to make stream single channel frame size 512
+            decoder.on('data', (chunk) => {//Need to make stream single channel frame size 512
                 console.log(chunk.length);
-                console.log(chunk);
-                console.log(Object.keys(chunk));
                 // let keywordIndex = userHandlers[user].process(chunk);
 
                 // if (keywordIndex != -1) {
