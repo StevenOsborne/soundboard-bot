@@ -26,8 +26,10 @@ module.exports = {
 
         userStreams[user] = receiver.createStream(user, {mode: 'opus', end: 'manual'});
         const decoder = new prism.opus.Decoder({channels: 1, rate: 8000, frameSize: 512});
-
-        userStreams[user].pipe(decoder)
+        
+        userStreams[user]
+        .pipe(new prism.opus.OggDemuxer())
+        .pipe(decoder)
 
         listeningToUsers[user] = true;
 
