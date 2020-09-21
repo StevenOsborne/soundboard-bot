@@ -24,11 +24,8 @@ module.exports = {
             receiver = connection.receiver;
         }
 
-        console.log(userHandlers[user].sample_rate);
-        console.log(userHandlers[user].frame_length);
-
         userStreams[user] = receiver.createStream(user, {mode: 'opus', end: 'manual'});
-        const decoder = new prism.opus.Decoder({channels: 1, rate: 12800, frameSize: 512});
+        const decoder = new prism.opus.Decoder({channels: 1, rate: 8000, frameSize: 512});
 
         userStreams[user].pipe(decoder)
 
