@@ -27,7 +27,7 @@ module.exports = {
     args: false,
     voice: true,
     execute(connection, user, args) {
-        userHandlers[user] = new Porcupine([GRASSHOPPER, BUMBLEBEE], [0.7, 0.8]);
+        userHandlers[user] = new Porcupine([GRASSHOPPER, BLUEBERRY], [0.7, 0.8]);
         const frameLength = userHandlers[user].frameLength;
         if (!receiver) {
             receiver = connection.receiver;
