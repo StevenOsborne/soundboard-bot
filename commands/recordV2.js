@@ -11,6 +11,14 @@ var receiver;
 var listeningToUsers = [];
 var userStreams = [];
 var userHandlers = [];
+var userDecoders = [];
+var userFrameAccumulators = [[]];
+
+function chunkArray(array, size) {
+    return Array.from({ length: Math.ceil(array.length / size) }, (v, index) =>
+        array.slice(index * size, index * size + size)
+    );
+}
 
 module.exports = {
     name: 'recordV2',
@@ -19,28 +27,47 @@ module.exports = {
     args: false,
     voice: true,
     execute(connection, user, args) {
-        userHandlers[user] = new Porcupine([GRASSHOPPER, BUMBLEBEE], [0.5, 0.65]);
+        userHandlers[user] = new Porcupine([GRASSHOPPER, BUMBLEBEE], [0.7, 0.8]);
+        const frameLength = userHandlers[user].frameLength;
         if (!receiver) {
             receiver = connection.receiver;
         }
 
         userStreams[user] = receiver.createStream(user, {mode: 'opus', end: 'manual'});
-        const decoder = new prism.opus.Decoder({channels: 1, rate: 8000, frameSize: 512});
+        userDecoders[user] = new prism.opus.Decoder({frameSize: 640, channels: 1, rate: 16000});
         
         userStreams[user]
-        .pipe(new prism.opus.OggDemuxer())
-        .pipe(decoder)
-
+        .pipe(userDecoders[user]);
+        
         listeningToUsers[user] = true;
-
+        userFrameAccumulators[user] = [];
         try {
-            console.log("Start utterance");
-            decoder.on('data', (chunk) => {//Need to make stream single channel frame size 512
-                console.log(chunk.length);
-                let keywordIndex = userHandlers[user].process(chunk);
+            userDecoders[user].on('data', (data) => {
+                // Two bytes per Int16 from the data buffer
+                let newFrames16 = new Array(data.length / 2);
+                for (let i = 0; i < data.length; i += 2) {
+                    newFrames16[i / 2] = data.readInt16LE(i);
+                }
+                // Split the incoming PCM integer data into arrays of size Porcupine.frameLength. If there's insufficient frames, or a remainder,
+                // store it in 'frameAccumulator' for the next iteration, so that we don't miss any audio data
+                userFrameAccumulators[user] = userFrameAccumulators[user].concat(newFrames16);
+                let frames = chunkArray(userFrameAccumulators[user], frameLength);
 
-                if (keywordIndex != -1) {
-                    meme.execute(connection, null, args);
+                if (frames[frames.length - 1].length !== frameLength) {
+                    // store remainder from divisions of frameLength
+                    userFrameAccumulators[user] = frames.pop();
+                } else {
+                    userFrameAccumulators[user] = [];
+                }
+                for (let frame of frames) {
+                    let index = userHandlers[user].process(frame);
+                    if (index !== -1) {
+                        if (index == 0) {
+                            meme.execute(connection, null, args);
+                        } else if (index == 1) {
+                            play.skip();
+                        }
+                    }
                 }
             });
         } catch (error) {
@@ -51,7 +78,7 @@ module.exports = {
         if (listeningToUsers[user]) {
             listeningToUsers[user] = false;
             if (userStreams[user]) {
-                userStreams[user].end();
+                userStreams[user].end();//TODO - This will need changing if we are using opus mode on stream
             }
             if(userHandlers[user]) {
                 userHandlers[user].release();
