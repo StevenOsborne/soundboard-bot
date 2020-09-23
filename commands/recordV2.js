@@ -4,7 +4,7 @@ const prism = require('prism-media');
 const Porcupine = require("@picovoice/porcupine-node");
 const {
     GRASSHOPPER,
-    BUMBLEBEE,
+    BLUEBERRY,
   } = require("@picovoice/porcupine-node/builtin_keywords");
 
 var receiver;
@@ -27,12 +27,11 @@ module.exports = {
     args: false,
     voice: true,
     execute(connection, user, args) {
-        userHandlers[user] = new Porcupine([GRASSHOPPER, BLUEBERRY], [0.7, 0.8]);
+        userHandlers[user] = new Porcupine([GRASSHOPPER, BLUEBERRY], [0.7, 0.85]);
         const frameLength = userHandlers[user].frameLength;
         if (!receiver) {
             receiver = connection.receiver;
         }
-
         userStreams[user] = receiver.createStream(user, {mode: 'opus', end: 'manual'});
         userDecoders[user] = new prism.opus.Decoder({frameSize: 640, channels: 1, rate: 16000});
         
@@ -78,10 +77,17 @@ module.exports = {
         if (listeningToUsers[user]) {
             listeningToUsers[user] = false;
             if (userStreams[user]) {
-                userStreams[user].end();//TODO - This will need changing if we are using opus mode on stream
+                userStreams[user].emit('end');
+                userStreams[user].destroy();
             }
             if(userHandlers[user]) {
                 userHandlers[user].release();
+            }
+            if(userDecoders[user]) {
+                userDecoders[user].end();
+            }
+            if(userFrameAccumulators[user]) {
+                userFrameAccumulators[user] = [];
             }
         }
     },
