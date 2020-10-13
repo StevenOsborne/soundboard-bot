@@ -9,6 +9,8 @@ module.exports = {
             .filter(item => item.name.includes('.mp3'))
             .filter(item => !item.isDirectory())
             .map(item => item.name.replace(/_/g, ' ').replace('.mp3', '') + '\n');
+
+        files.sort();
         
         message.channel.send("```\n" + files.toString().replace(/,/g, '') + "\n```");
 	},
