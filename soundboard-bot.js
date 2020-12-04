@@ -59,6 +59,8 @@ client.on('message', async message => {
         if (!command.notCallable) {
             if (command.voice) {
                 if (voiceConnection) {
+                    console.log('Voice connection status: ' + voiceConnection.status);
+                    console.log(voiceConnection);
                     command.execute(voiceConnection, message, args);
                 } else {
                     console.log('No voice connection. Requesting voice connection...');
