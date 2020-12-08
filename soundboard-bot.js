@@ -78,6 +78,7 @@ client.on('message', async message => {
                             command.execute(connection, message, args);
                         })
                         .catch(error => {
+                            console.log('Error getting voice connection.');
                             console.error(error);
                           });
                 }
@@ -87,6 +88,7 @@ client.on('message', async message => {
         }
         
     } catch (error) {
+        console.log('Error in main command loop');
         console.error(error);
         message.reply('there was an error trying to execute that command!');
     }
