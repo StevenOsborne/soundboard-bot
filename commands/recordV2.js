@@ -1,3 +1,4 @@
+require('log-timestamp');
 const meme = require('./meme.js')
 const play = require('./play.js')
 const prism = require('prism-media');

@@ -1,5 +1,6 @@
 //TODO - Bot seems to drop out of discord voice channel after inactivity (maybe it just crashes). It still thinks it is in the correct voice channel
 //TODO - Try to log when the bot is dropping out? Could try to disconnect it so that it can just be called back in
+require('log-timestamp');
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = process.argv[2] == 'PROD' ? require('./config.json') : require('./qa_config.json');

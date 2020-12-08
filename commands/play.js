@@ -1,3 +1,4 @@
+require('log-timestamp');
 var queue = [];
 var playing = false;
 var dispatcher;
