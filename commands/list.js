@@ -11,7 +11,16 @@ module.exports = {
             .map(item => item.name.replace(/_/g, ' ').replace('.mp3', '') + '\n');
 
         files.sort();
-        
-        message.channel.send("```\n" + files.toString().replace(/,/g, '') + "\n```");
+
+        for (let array of splitToChunks(files, 100)) {
+            message.channel.send("```\n" + array.toString().replace(/,/g, '') + "\n```");
+        }
 	},
+
+	splitToChunks(array, chunkSize) {
+      var result = [];
+      for (var i=0,len=array.length; i<len; i+=chunkSize)
+        result.push(array.slice(i,i+chunkSize));
+      return result;
+    },
 };
