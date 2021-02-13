@@ -1,16 +1,15 @@
 const fs = require('fs');
 
-splitToChunks(array, chunkSize) {
-      var result = [];
-      for (var i=0,len=array.length; i<len; i+=chunkSize)
-        result.push(array.slice(i,i+chunkSize));
-      return result;
-    }
-
 module.exports = {
 	name: 'list',
     description: 'list all clips',
     args: false,
+    splitToChunks(array, chunkSize) {
+        var result = [];
+        for (var i=0,len=array.length; i<len; i+=chunkSize)
+          result.push(array.slice(i,i+chunkSize));
+        return result;
+    },
 	execute(message, args) {
         let files = fs.readdirSync('./sounds', {withFileTypes: true})
             .filter(item => item.name.includes('.mp3'))
