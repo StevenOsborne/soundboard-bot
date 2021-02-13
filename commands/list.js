@@ -5,7 +5,7 @@ function splitToChunks(array, chunkSize) {
     for (var i=0,len=array.length; i<len; i+=chunkSize)
       result.push(array.slice(i,i+chunkSize));
     return result;
-},
+}
 
 module.exports = {
 	name: 'list',
