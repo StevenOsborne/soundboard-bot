@@ -1,5 +1,12 @@
 const fs = require('fs');
 
+splitToChunks(array, chunkSize) {
+      var result = [];
+      for (var i=0,len=array.length; i<len; i+=chunkSize)
+        result.push(array.slice(i,i+chunkSize));
+      return result;
+    }
+
 module.exports = {
 	name: 'list',
     description: 'list all clips',
@@ -16,11 +23,4 @@ module.exports = {
             message.channel.send("```\n" + array.toString().replace(/,/g, '') + "\n```");
         }
 	},
-
-	splitToChunks(array, chunkSize) {
-      var result = [];
-      for (var i=0,len=array.length; i<len; i+=chunkSize)
-        result.push(array.slice(i,i+chunkSize));
-      return result;
-    },
 };
